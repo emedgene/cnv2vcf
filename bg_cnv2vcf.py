@@ -8,6 +8,9 @@ import sys
 from pysam import FastaFile
 
 
+VCF_FORMAT = 'GT:ZS:LR:CD:RPKM'
+
+
 @contextmanager
 def open_file(filename, mode='r'):
     if 'w' in mode and filename.endswith('.gz'):
@@ -74,7 +77,8 @@ def main():
             # chr, pos, id, ref, alt, qual, filter, info, format, sample
             vcf_fields = [chrom, position, '.', ref_allele, cnv_type, '.', '.', info_field, 'GT']
             vcf_fields += ['./.'] * num_samples
-            vcf_fields[proband_index] = '0/0'
+            vcf_fields[proband_index] = ':'.join(['0/0', cnv_line['Zscore'], cnv_line['LogRatio'],
+                                                  cnv_line['CountDensity'], cnv_line['RPKM']])
             output_file.write("\t".join(vcf_fields) + "\n")
 
 
