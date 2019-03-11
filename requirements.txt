@@ -1,0 +1,2 @@
+-e git://github.com/emedgene/biopython.git@9f5c0caff612b3a6e5d8ba950c7ddc6ac77a3b60#egg=biopython
+pysam==0.9.1.4
