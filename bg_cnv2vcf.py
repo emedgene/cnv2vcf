@@ -42,7 +42,7 @@ def get_cnv_type(log_ratio):
 
 def main():
     args = parse_arguments()
-    with open_file(args.output_path) as output_file, open_file(args.icnv) as input_cnv_file,\
+    with open_file(args.output_path, 'w') as output_file, open_file(args.icnv) as input_cnv_file,\
             FastaFile(args.fasta_path) as genome_ref, open_file(args.isnv) as vcf_input:
         # Write all snv lines
         num_samples = 0
@@ -50,7 +50,7 @@ def main():
         for snv_line in vcf_input:
             if snv_line.startswith('#'):
                 if not snv_line.startswith('##'):
-                    split_line = snv_line.split("\t")
+                    split_line = snv_line.strip().split("\t")
                     num_samples = len(split_line) - 8  # chr, pos, id, ref, alt, qual, filter, info, format
                     try:
                         proband_index = split_line.index(args.proband_id)
@@ -70,7 +70,7 @@ def main():
 
             chrom = cnv_line['seqnames']
             position = cnv_line['start']
-            ref_allele = genome_ref.fetch(region='{chr}:{pos}:{pos}'.format(chr=chrom, pos=position))
+            ref_allele = genome_ref.fetch(region='chr{chr}:{pos}:{pos}'.format(chr=chrom, pos=position))
             info_dict = {'SVTYPE': cnv_type, 'SVLEN': cnv_length, 'END': cnv_line['end'], 'LogRatio': log_ratio}
             info_field = ';'.join([f'{key}={value}' for key, value in info_dict.items()])
 
