@@ -3,7 +3,7 @@ import csv
 import gzip
 from contextlib import contextmanager
 
-import bgzf
+from Bio import bgzf
 import sys
 from pysam import FastaFile
 
