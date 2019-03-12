@@ -8,7 +8,7 @@ import sys
 from pysam import FastaFile
 
 
-VCF_FORMAT = 'GT:ZS:LR:CD:RPKM'
+SAMPLE_DATA_FIELDS = ['GT', 'ZS', 'LR', 'CD', 'RPKM']
 
 
 @contextmanager
@@ -74,10 +74,11 @@ def main():
             info_dict = {'SVTYPE': cnv_type, 'SVLEN': cnv_length, 'END': cnv_line['end'], 'LogRatio': log_ratio}
             info_field = ';'.join([f'{key}={value}' for key, value in info_dict.items()])
 
-            # chr, pos, id, ref, alt, qual, filter, info, format, sample
-            vcf_fields = [chrom, position, '.', ref_allele, cnv_type, '.', '.', info_field, 'GT']
-            vcf_fields += ['./.'] * num_samples
-            vcf_fields[proband_index] = ':'.join(['0/0', cnv_line['Zscore'], cnv_line['LogRatio'],
+            # chr, pos, id, ref, alt, qual, filter, info, format, *samples
+            vcf_fields = [chrom, position, '.', ref_allele, cnv_type, '.', '.', info_field,
+                          ':'.join(SAMPLE_DATA_FIELDS)]
+            vcf_fields += ['./.' + ':'.join(['.'] * (len(SAMPLE_DATA_FIELDS) - 1))] * num_samples
+            vcf_fields[proband_index] = ':'.join(['1/1', cnv_line['Zscore'], cnv_line['LogRatio'],
                                                   cnv_line['CountDensity'], cnv_line['RPKM']])
             output_file.write("\t".join(vcf_fields) + "\n")
 
