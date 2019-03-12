@@ -75,7 +75,7 @@ def main():
             info_field = ';'.join([f'{key}={value}' for key, value in info_dict.items()])
 
             # chr, pos, id, ref, alt, qual, filter, info, format, *samples
-            vcf_fields = [chrom, position, '.', ref_allele, cnv_type, '.', '.', info_field,
+            vcf_fields = [chrom, position, '.', ref_allele, f'<{cnv_type}>', '.', '.', info_field,
                           ':'.join(SAMPLE_DATA_FIELDS)]
             vcf_fields += ['./.' + ':'.join(['.'] * (len(SAMPLE_DATA_FIELDS) - 1))] * num_samples
             vcf_fields[proband_index] = ':'.join(['1/1', cnv_line['Zscore'], cnv_line['LogRatio'],
