@@ -77,7 +77,7 @@ def main():
             # chr, pos, id, ref, alt, qual, filter, info, format, *samples
             vcf_fields = [chrom, position, '.', ref_allele, f'<{cnv_type}>', '.', '.', info_field,
                           ':'.join(SAMPLE_DATA_FIELDS)]
-            vcf_fields += ['./.' + ':'.join(['.'] * (len(SAMPLE_DATA_FIELDS) - 1))] * num_samples
+            vcf_fields += ['./.:' + ':'.join(['.'] * (len(SAMPLE_DATA_FIELDS) - 1))] * num_samples
             vcf_fields[proband_index] = ':'.join(['1/1', cnv_line['Zscore'], cnv_line['LogRatio'],
                                                   cnv_line['CountDensity'], cnv_line['RPKM']])
             output_file.write("\t".join(vcf_fields) + "\n")
