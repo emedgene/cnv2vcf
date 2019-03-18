@@ -51,7 +51,7 @@ def main():
             if snv_line.startswith('#'):
                 if not snv_line.startswith('##'):
                     split_line = snv_line.strip().split("\t")
-                    num_samples = len(split_line) - 8  # chr, pos, id, ref, alt, qual, filter, info, format
+                    num_samples = len(split_line) - 9  # chr, pos, id, ref, alt, qual, filter, info, format
                     try:
                         proband_index = split_line.index(args.proband_id)
                     except ValueError:
