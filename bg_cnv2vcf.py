@@ -27,12 +27,12 @@ def open_file(filename, mode='r'):
 def parse_arguments():
     argument_parser = argparse.ArgumentParser()
     parser = argument_parser.add_argument_group('Required arguments:')
-    parser.add_argument("-icnv", help="Input BG CNV file", required=True)
+    parser.add_argument("-icnv", help="Input CNV file", required=True)
     parser.add_argument("-o", dest='output_path', required=True,
-                        help="output file containing both CNVs and SNVs in compressed VCF format")
+                        help="output file containing both CNVs and SNVs in VCF format")
     parser.add_argument("-p", dest='proband_id', help="Sample ID of the proband", required=True)
-    parser.add_argument("-f", help="Path to fastq file", dest='fasta_path', required=True)
-    parser.add_argument("-isnv", help="Input VCF file containg SNVs", required=True)
+    parser.add_argument("-f", help="Path to fasta file", dest='fasta_path', required=True)
+    parser.add_argument("-isnv", help="Input VCF file containing SNVs", required=True)
     return argument_parser.parse_args()
 
 
