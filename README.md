@@ -7,7 +7,7 @@ before using this tool please install the packages in `requirements.txt`
 
 ### Usage
 ```
-usage: bg_cnv2vcf.py [-h] -icnv ICNV -o OUTPUT_PATH -p PROBAND_ID -f
+usage: python bg_cnv2vcf.py [-h] -icnv ICNV -o OUTPUT_PATH -p PROBAND_ID -f
                      FASTA_PATH -isnv ISNV
 
 optional arguments:
