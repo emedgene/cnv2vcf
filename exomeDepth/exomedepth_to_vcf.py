@@ -3,7 +3,7 @@ import csv
 
 from pysam import FastaFile
 
-FORMAT = 'GT:DP:BF:RR'
+FORMAT = 'DP:BF:RR'
 INFO_INDEX = 7
 CNV_TYPE_TO_SHORT = {
     'deletion': 'DEL',
@@ -21,19 +21,19 @@ def parse_args():
 
 
 def get_vcf_headers():
-    headers = ['##fileformat=VCFv4.1', "##contig=<ID=1,length=249250621>", "##contig=<ID=2,length=243199373>",
-               "##contig=<ID=3,length=198022430>", "##contig=<ID=4,length=191154276>",
-               "##contig=<ID=5,length=180915260>", "##contig=<ID=6,length=171115067>",
-               "##contig=<ID=7,length=159138663>", "##contig=<ID=8,length=146364022>",
-               "##contig=<ID=9,length=141213431>", "##contig=<ID=10,length=135534747>",
-               "##contig=<ID=11,length=135006516>", "##contig=<ID=12,length=133851895>",
-               "##contig=<ID=13,length=115169878>", "##contig=<ID=14,length=107349540>",
-               "##contig=<ID=15,length=102531392>", "##contig=<ID=16,length=90354753>",
-               "##contig=<ID=17,length=81195210>", "##contig=<ID=18,length=78077248>",
-               "##contig=<ID=19,length=59128983>", "##contig=<ID=20,length=63025520>",
-               "##contig=<ID=21,length=48129895>", "##contig=<ID=22,length=51304566>",
-               "##contig=<ID=X,length=155270560>", "##contig=<ID=Y,length=59373566>",
-               "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tproband"]
+    headers = ['##fileformat=VCFv4.1', 'source=exomeDepthVCFConverter', "##contig=<ID=1,length=249250621>",
+               "##contig=<ID=2,length=243199373>", "##contig=<ID=3,length=198022430>",
+               "##contig=<ID=4,length=191154276>", "##contig=<ID=5,length=180915260>",
+               "##contig=<ID=6,length=171115067>", "##contig=<ID=7,length=159138663>",
+               "##contig=<ID=8,length=146364022>", "##contig=<ID=9,length=141213431>",
+               "##contig=<ID=10,length=135534747>", "##contig=<ID=11,length=135006516>",
+               "##contig=<ID=12,length=133851895>", "##contig=<ID=13,length=115169878>",
+               "##contig=<ID=14,length=107349540>", "##contig=<ID=15,length=102531392>",
+               "##contig=<ID=16,length=90354753>", "##contig=<ID=17,length=81195210>",
+               "##contig=<ID=18,length=78077248>", "##contig=<ID=19,length=59128983>",
+               "##contig=<ID=20,length=63025520>", "##contig=<ID=21,length=48129895>",
+               "##contig=<ID=22,length=51304566>", "##contig=<ID=X,length=155270560>",
+               "##contig=<ID=Y,length=59373566>", "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tproband"]
     return headers
 
 
@@ -58,6 +58,11 @@ def get_sv_type(cnv_line):
 
 
 def get_cnv_info(cnv_line):
+    num_calls = cnv_line["num.calls"]
+    reads_expected = cnv_line["reads.expected"]
+    start_p = cnv_line["start.p"]
+    end_p = cnv_line["end.p"]
+    num_exons = cnv_line["nexons"]
     sv_type = get_sv_type(cnv_line)
     start_position = cnv_line["start"]
     end_position = cnv_line["end"]
@@ -65,17 +70,21 @@ def get_cnv_info(cnv_line):
     cnv_info = {
         'SVLEN': sv_len,
         'END': end_position,
-        'SVTYPE': sv_type
+        'SVTYPE': sv_type,
+        'num_calls': num_calls,
+        'reads_expected': reads_expected,
+        'start_p': start_p,
+        'end_p': end_p,
+        'num_exons': num_exons
     }
     return cnv_info
 
 
 def get_sample_data(cnv_line):
-    genotype = '1/1'
     depth = cnv_line['reads.observed']
     bf = cnv_line['BF']
     read_ratio = cnv_line['reads.ratio']
-    return f'{genotype}:{depth}:{bf}:{read_ratio}'
+    return f'{depth}:{bf}:{read_ratio}'
 
 
 def get_vcf_line(cnv_line, genome_ref):
