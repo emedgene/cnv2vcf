@@ -1,5 +1,6 @@
 import argparse
 import csv
+import sys
 
 from pysam import FastaFile
 
@@ -20,8 +21,10 @@ def parse_args():
     return parser.parse_args()
 
 
-def get_vcf_headers():
+def get_vcf_headers(sample_name):
+    cmdline = " ".join(sys.argv)
     headers = ['##fileformat=VCFv4.1', 'source=exomeDepthVCFConverter,version=0.1.0',
+               f'ConverterCMDLine={cmdline}'
                "##contig=<ID=1,length=249250621>", "##contig=<ID=2,length=243199373>",
                "##contig=<ID=3,length=198022430>", "##contig=<ID=4,length=191154276>",
                "##contig=<ID=5,length=180915260>", "##contig=<ID=6,length=171115067>",
@@ -34,15 +37,23 @@ def get_vcf_headers():
                "##contig=<ID=19,length=59128983>", "##contig=<ID=20,length=63025520>",
                "##contig=<ID=21,length=48129895>", "##contig=<ID=22,length=51304566>",
                "##contig=<ID=X,length=155270560>", "##contig=<ID=Y,length=59373566>",
-               "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tproband"]
+               f"#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t{sample_name}"]
     return headers
 
 
+def extract_sample_name(bed_file_path):
+    with open(bed_file_path) as bed_file:
+        temp_reader = csv.DictReader(bed_file, delimiter='\t')
+        cnv_line = next(temp_reader)
+        return cnv_line['sample']
+
+
 def main(args):
+    sample_name = extract_sample_name(args.input_path)
     with open(args.input_path) as cnv_input, FastaFile(args.genome_ref) as genome_ref,\
             open(args.output_path, 'w') as vcf_output:
-        vcf_output.write('\n'.join(get_vcf_headers()) + '\n')
         cnv_reader = csv.DictReader(cnv_input, delimiter='\t')
+        vcf_output.write('\n'.join(get_vcf_headers(sample_name)) + '\n')
         for cnv_line in cnv_reader:
             vcf_line = get_vcf_line(cnv_line, genome_ref)
             vcf_output.write(vcf_line + '\n')
