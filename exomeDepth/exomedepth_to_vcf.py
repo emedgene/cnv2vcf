@@ -52,10 +52,11 @@ def main(args):
     sample_name = extract_sample_name(args.input_path)
     with open(args.input_path) as cnv_input, FastaFile(args.genome_ref) as genome_ref,\
             open(args.output_path, 'w') as vcf_output:
+        is_full_chrom_name = genome_ref.references[0].startswith('chr')
         cnv_reader = csv.DictReader(cnv_input, delimiter='\t')
         vcf_output.write('\n'.join(get_vcf_headers(sample_name)) + '\n')
         for cnv_line in cnv_reader:
-            vcf_line = get_vcf_line(cnv_line, genome_ref)
+            vcf_line = get_vcf_line(cnv_line, genome_ref, is_full_chrom_name)
             vcf_output.write(vcf_line + '\n')
 
 
@@ -99,10 +100,15 @@ def get_sample_data(cnv_line):
     return f'{depth}:{bf}:{read_ratio}'
 
 
-def get_vcf_line(cnv_line, genome_ref):
+def get_vcf_line(cnv_line, genome_ref, is_full_chrom_name):
     chrom = get_chrom(cnv_line)
     start_position = cnv_line["start"]
-    ref_allele = genome_ref.fetch(region='{chr}:{pos}:{pos}'.format(chr=chrom, pos=start_position))
+    chrom_for_ref = chrom
+    if is_full_chrom_name and not chrom.startswith('chr'):
+        chrom_for_ref = f'chr{chrom_for_ref}'
+    if not is_full_chrom_name and chrom.startswith('chr'):
+        chrom_for_ref = chrom_for_ref[3:]
+    ref_allele = genome_ref.fetch(region='{chr}:{pos}:{pos}'.format(chr=chrom_for_ref, pos=start_position))
     alt = get_alt(cnv_line)
     info = get_cnv_info(cnv_line)
     sample_data = get_sample_data(cnv_line)
