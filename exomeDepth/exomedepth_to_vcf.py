@@ -112,10 +112,7 @@ def get_vcf_line(cnv_line, genome_ref):
 
 
 def get_chrom(cnv_line):
-    chrom = cnv_line["chromosome"]
-    if not chrom.startswith('chr'):
-        chrom = 'chr' + chrom
-    return chrom
+    return cnv_line["chromosome"]
 
 
 def get_alt(cnv_line):
