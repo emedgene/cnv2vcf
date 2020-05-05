@@ -24,7 +24,7 @@ def parse_args():
 def get_vcf_headers(sample_name):
     cmdline = " ".join(sys.argv)
     headers = ['##fileformat=VCFv4.1', 'source=exomeDepthVCFConverter,version=0.1.0',
-               f'ConverterCMDLine={cmdline}'
+               f'ConverterCMDLine={cmdline}',
                "##contig=<ID=1,length=249250621>", "##contig=<ID=2,length=243199373>",
                "##contig=<ID=3,length=198022430>", "##contig=<ID=4,length=191154276>",
                "##contig=<ID=5,length=180915260>", "##contig=<ID=6,length=171115067>",
