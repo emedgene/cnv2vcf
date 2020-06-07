@@ -23,8 +23,8 @@ def parse_args():
 
 def get_vcf_headers(sample_name, genome_ref):
     cmdline = " ".join(sys.argv)
-    headers = ['##fileformat=VCFv4.1', 'source=exomeDepthVCFConverter,version=0.1.0',
-               f'ConverterCMDLine={cmdline}']
+    headers = ['##fileformat=VCFv4.1', '##source=exomeDepthVCFConverter,version=0.1.0',
+               f'##ConverterCMDLine={cmdline}']
     headers += [f"##contig=<ID={name},length={length}>"
                 for name, length in zip(genome_ref.references, genome_ref.lengths)]
     headers.append(f"#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t{sample_name}")
